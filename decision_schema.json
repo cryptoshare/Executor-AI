@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "ts",
+    "symbol",
+    "decision",
+    "allow_new_trades",
+    "side",
+    "confidence",
+    "reasons",
+    "risk_plan",
+    "compliance",
+    "scores",
+    "rr"
+  ],
+  "properties": {
+    "ts": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "symbol": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "enter",
+        "skip"
+      ]
+    },
+    "allow_new_trades": {
+      "type": "boolean"
+    },
+    "side": {
+      "type": "string",
+      "enum": [
+        "long",
+        "short",
+        "none"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "denied_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risk_plan": {
+      "type": "object",
+      "required": [
+        "position_usd",
+        "max_risk_pct_equity",
+        "entry_plan",
+        "stop_loss",
+        "take_profits",
+        "trail"
+      ],
+      "properties": {
+        "position_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_risk_pct_equity": {
+          "type": "number",
+          "minimum": 0
+        },
+        "entry_plan": {
+          "type": "object",
+          "required": [
+            "type",
+            "entries",
+            "cancel_if"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "limit",
+                "market",
+                "ladder"
+              ]
+            },
+            "entries": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "price",
+                  "size_frac"
+                ],
+                "properties": {
+                  "price": {
+                    "type": "number"
+                  },
+                  "size_frac": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "cancel_if": {
+              "type": "object"
+            }
+          }
+        },
+        "stop_loss": {
+          "type": "number"
+        },
+        "take_profits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "price",
+              "close_frac"
+            ],
+            "properties": {
+              "price": {
+                "type": "number"
+              },
+              "close_frac": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "trail": {
+          "type": "object"
+        }
+      }
+    },
+    "compliance": {
+      "type": "object"
+    },
+    "scores": {
+      "type": "object"
+    },
+    "rr": {
+      "type": "number"
+    }
+  }
+}
