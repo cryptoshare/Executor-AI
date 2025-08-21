@@ -208,3 +208,72 @@ class BybitTrader:
         except Exception as e:
             logger.error(f"Failed to cancel order: {e}")
             raise
+
+    def get_positions(self, symbol: Optional[str] = None) -> Dict[str, Any]:
+        """Get all open positions for perpetual futures"""
+        try:
+            params = {
+                "category": "linear",
+                "settleCoin": "USDT"  # Required parameter for linear perpetual
+            }
+            if symbol:
+                params["symbol"] = symbol
+                
+            response = self.client.get_positions(**params)
+            
+            if response["retCode"] == 0:
+                logger.info(f"Retrieved {len(response['result']['list'])} positions")
+                return response
+            else:
+                logger.error(f"Failed to get positions: {response}")
+                raise Exception(f"Failed to get positions: {response['retMsg']}")
+                
+        except Exception as e:
+            logger.error(f"Failed to get positions: {e}")
+            raise
+
+    def get_active_orders(self, symbol: Optional[str] = None) -> Dict[str, Any]:
+        """Get all active orders for perpetual futures"""
+        try:
+            params = {
+                "category": "linear",
+                "settleCoin": "USDT"  # Required parameter for linear perpetual
+            }
+            if symbol:
+                params["symbol"] = symbol
+                
+            response = self.client.get_open_orders(**params)
+            
+            if response["retCode"] == 0:
+                logger.info(f"Retrieved {len(response['result']['list'])} active orders")
+                return response
+            else:
+                logger.error(f"Failed to get active orders: {response}")
+                raise Exception(f"Failed to get active orders: {response['retMsg']}")
+                
+        except Exception as e:
+            logger.error(f"Failed to get active orders: {e}")
+            raise
+
+    def get_order_history(self, symbol: Optional[str] = None, limit: int = 50) -> Dict[str, Any]:
+        """Get order history for perpetual futures"""
+        try:
+            params = {
+                "category": "linear",
+                "limit": limit
+            }
+            if symbol:
+                params["symbol"] = symbol
+                
+            response = self.client.get_order_history(**params)
+            
+            if response["retCode"] == 0:
+                logger.info(f"Retrieved {len(response['result']['list'])} historical orders")
+                return response
+            else:
+                logger.error(f"Failed to get order history: {response}")
+                raise Exception(f"Failed to get order history: {response['retMsg']}")
+                
+        except Exception as e:
+            logger.error(f"Failed to get order history: {e}")
+            raise

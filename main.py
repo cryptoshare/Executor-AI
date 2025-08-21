@@ -216,6 +216,55 @@ def account_status():
             "error": str(e)
         }
 
+@app.get("/v1/positions")
+def get_positions_and_orders():
+    """Get all perpetual positions and active orders"""
+    if not bybit_trader:
+        return {
+            "trading_available": False,
+            "message": "Bybit credentials not configured"
+        }
+    
+    try:
+        # Get positions
+        positions_response = bybit_trader.get_positions()
+        positions = positions_response.get("result", {}).get("list", [])
+        
+        # Filter only positions with non-zero size
+        active_positions = [pos for pos in positions if float(pos.get("size", "0")) > 0]
+        
+        # Get active orders
+        orders_response = bybit_trader.get_active_orders()
+        active_orders = orders_response.get("result", {}).get("list", [])
+        
+        # Get account summary
+        account_info = bybit_trader.get_account_info()
+        account_summary = account_info.get("result", {}).get("list", [{}])[0]
+        
+        return {
+            "trading_available": True,
+            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "account_summary": {
+                "total_equity": account_summary.get("totalEquity"),
+                "total_wallet_balance": account_summary.get("totalWalletBalance"),
+                "total_perp_pnl": account_summary.get("totalPerpUPL"),
+                "account_type": account_summary.get("accountType")
+            },
+            "positions": {
+                "count": len(active_positions),
+                "list": active_positions
+            },
+            "active_orders": {
+                "count": len(active_orders),
+                "list": active_orders
+            }
+        }
+    except Exception as e:
+        return {
+            "trading_available": False,
+            "error": str(e)
+        }
+
 @app.post("/v1/execute")
 async def execute(request: Request):
     raw = await request.body()
