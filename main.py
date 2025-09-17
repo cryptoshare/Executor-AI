@@ -265,6 +265,70 @@ def get_positions_and_orders():
             "error": str(e)
         }
 
+@app.get("/v1/trade-history")
+def get_trade_history(symbol: str = None, limit: int = 50, start_time: int = None, end_time: int = None):
+    """Get perpetual trade execution history"""
+    if not bybit_trader:
+        return {
+            "trading_available": False,
+            "message": "Bybit credentials not configured"
+        }
+    
+    try:
+        # Validate limit parameter
+        if limit > 1000:
+            limit = 1000
+        elif limit < 1:
+            limit = 50
+        
+        # Get trade history
+        trade_history_response = bybit_trader.get_trade_history(
+            symbol=symbol,
+            limit=limit,
+            start_time=start_time,
+            end_time=end_time
+        )
+        
+        trades = trade_history_response.get("result", {}).get("list", [])
+        
+        # Process and format trade data
+        formatted_trades = []
+        for trade in trades:
+            formatted_trade = {
+                "symbol": trade.get("symbol"),
+                "side": trade.get("side"),
+                "executed_price": trade.get("execPrice"),
+                "executed_qty": trade.get("execQty"),
+                "executed_value": trade.get("execValue"),
+                "executed_fee": trade.get("execFee"),
+                "executed_time": trade.get("execTime"),
+                "order_id": trade.get("orderId"),
+                "order_link_id": trade.get("orderLinkId"),
+                "is_maker": trade.get("isMaker"),
+                "trade_id": trade.get("execId")
+            }
+            formatted_trades.append(formatted_trade)
+        
+        return {
+            "trading_available": True,
+            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "query_params": {
+                "symbol": symbol,
+                "limit": limit,
+                "start_time": start_time,
+                "end_time": end_time
+            },
+            "trades": {
+                "count": len(formatted_trades),
+                "list": formatted_trades
+            }
+        }
+    except Exception as e:
+        return {
+            "trading_available": False,
+            "error": str(e)
+        }
+
 @app.post("/v1/execute")
 async def execute(request: Request):
     raw = await request.body()

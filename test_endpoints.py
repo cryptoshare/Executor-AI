@@ -47,6 +47,8 @@ def main():
         ("", "GET"),  # Root endpoint
         ("v1/healthz", "GET"),  # Health check
         ("v1/account", "GET"),  # Account status
+        ("v1/positions", "GET"),  # Positions and orders
+        ("v1/trade-history", "GET"),  # Trade history
         ("docs", "GET"),  # API documentation
     ]
     

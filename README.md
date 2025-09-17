@@ -157,6 +157,52 @@ When `BYBIT_API_KEY` and `BYBIT_API_SECRET` are configured:
 ### Account Status
 Check trading availability: `GET /v1/account`
 
+### Trade History
+Get perpetual trade execution history: `GET /v1/trade-history`
+
+**Query Parameters:**
+- `symbol` (optional): Filter by trading pair (e.g., "BTCUSDT")
+- `limit` (optional): Number of trades to return (1-1000, default: 50)
+- `start_time` (optional): Start timestamp in milliseconds
+- `end_time` (optional): End timestamp in milliseconds
+
+**Example:**
+```bash
+curl "https://your-app.up.railway.app/v1/trade-history?symbol=BTCUSDT&limit=100"
+```
+
+**Response:**
+```json
+{
+  "trading_available": true,
+  "timestamp": "2025-01-17T12:00:00.000Z",
+  "query_params": {
+    "symbol": "BTCUSDT",
+    "limit": 100,
+    "start_time": null,
+    "end_time": null
+  },
+  "trades": {
+    "count": 25,
+    "list": [
+      {
+        "symbol": "BTCUSDT",
+        "side": "Buy",
+        "executed_price": "45000.5",
+        "executed_qty": "0.1",
+        "executed_value": "4500.05",
+        "executed_fee": "2.25",
+        "executed_time": "1705507200000",
+        "order_id": "123456789",
+        "order_link_id": "",
+        "is_maker": false,
+        "trade_id": "exec_123456"
+      }
+    ]
+  }
+}
+```
+
 ### Important Notes
 - **Always test with testnet first** (`BYBIT_TESTNET=true`)
 - Ensure your API keys have trading permissions

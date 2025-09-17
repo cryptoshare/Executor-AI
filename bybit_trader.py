@@ -277,3 +277,31 @@ class BybitTrader:
         except Exception as e:
             logger.error(f"Failed to get order history: {e}")
             raise
+
+    def get_trade_history(self, symbol: Optional[str] = None, limit: int = 50, 
+                         start_time: Optional[int] = None, end_time: Optional[int] = None) -> Dict[str, Any]:
+        """Get trade execution history for perpetual futures"""
+        try:
+            params = {
+                "category": "linear",
+                "limit": limit
+            }
+            if symbol:
+                params["symbol"] = symbol
+            if start_time:
+                params["startTime"] = start_time
+            if end_time:
+                params["endTime"] = end_time
+                
+            response = self.client.get_execution_history(**params)
+            
+            if response["retCode"] == 0:
+                logger.info(f"Retrieved {len(response['result']['list'])} trade executions")
+                return response
+            else:
+                logger.error(f"Failed to get trade history: {response}")
+                raise Exception(f"Failed to get trade history: {response['retMsg']}")
+                
+        except Exception as e:
+            logger.error(f"Failed to get trade history: {e}")
+            raise
