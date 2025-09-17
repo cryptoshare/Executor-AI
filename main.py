@@ -267,7 +267,7 @@ def get_positions_and_orders():
 
 @app.get("/v1/trade-history")
 def get_trade_history(symbol: str = None, limit: int = 50, start_time: int = None, end_time: int = None):
-    """Get perpetual trade execution history"""
+    """Get linear perpetual futures trade execution history (not spot trades)"""
     if not bybit_trader:
         return {
             "trading_available": False,

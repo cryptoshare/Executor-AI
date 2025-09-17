@@ -280,7 +280,7 @@ class BybitTrader:
 
     def get_trade_history(self, symbol: Optional[str] = None, limit: int = 50, 
                          start_time: Optional[int] = None, end_time: Optional[int] = None) -> Dict[str, Any]:
-        """Get trade execution history for perpetual futures"""
+        """Get trade execution history for linear perpetual futures only (not spot)"""
         try:
             params = {
                 "category": "linear",
@@ -293,7 +293,7 @@ class BybitTrader:
             if end_time:
                 params["endTime"] = end_time
                 
-            response = self.client.get_trade_history(**params)
+            response = self.client.get_executions(**params)
             
             if response["retCode"] == 0:
                 logger.info(f"Retrieved {len(response['result']['list'])} trade executions")
