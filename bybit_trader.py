@@ -293,7 +293,7 @@ class BybitTrader:
             if end_time:
                 params["endTime"] = end_time
                 
-            response = self.client.get_execution_history(**params)
+            response = self.client.get_trade_history(**params)
             
             if response["retCode"] == 0:
                 logger.info(f"Retrieved {len(response['result']['list'])} trade executions")
